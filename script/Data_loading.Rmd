@@ -1,0 +1,149 @@
+---
+title: "madrid"
+author: "EP"
+date: "1/5/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(tabulizer)
+```
+
+## 200 Est F
+
+```{r}
+the_file <- "../raw_data/LISTADO INICIAL PREINSCRIPCIONES V CTO MASTER INVIERNO 21-22.pdf"
+ 
+temp<-extract_areas(the_file, pages = 2)
+
+estf200 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5]) %>% 
+  mutate(Categoria = str_sub(Nombre,-2),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = "200Est Fem") %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+  
+  
+
+```
+
+
+
+## 200 Est M
+
+
+```{r}
+temp<-extract_areas(the_file, pages = 3)
+
+estm200_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = temp[[1]][,3]) %>% 
+  mutate(Prueba = "200Est Mas") %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+  
+  
+```
+
+```{r}
+temp<-extract_areas(the_file, pages = 4)
+
+estm200_2 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = temp[[1]][,3]) %>% 
+  mutate(Prueba = "200Est Mas") %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+estm200 <- estm200_1 %>% rbind(estm200_2)
+```
+
+## 100 braza Femenino
+
+```{r}
+
+temp<-extract_areas(the_file, pages = 4)
+
+brf100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5]) %>% 
+  mutate(Categoria = str_sub(Nombre,-2),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = "100B Fem") %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+  
+```
+
+
+```{r}
+temp<-extract_areas(the_file, pages = 5)
+
+brf100_2 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = temp[[1]][,3]) %>% 
+  mutate(Prueba = "100B Fem") %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+brf100 <- brf100_1 %>% rbind(brf100_2)
+
+```
+
+## 100 Braza masculino
+
+```{r}
+temp<-extract_areas(the_file, pages = 5)
+
+
+bm100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = temp[[1]][,3]) %>% 
+  mutate(Prueba = "100B Mas") %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+```
+
+
+```{r}
+temp<-extract_areas(the_file, pages = 6)
+
+brm100_2 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5]) %>% 
+  mutate(Categoria = str_sub(Nombre,-2),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = "100B Mas") %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+```
+
+```{r}
+temp<-extract_areas(the_file, pages = 7)
+
+
+bm100_3 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = temp[[1]][,3]) %>% 
+  mutate(Prueba = "100B Mas") %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+bm100 <- bm100_1 %>% rbind(brm100_2) %>% rbind(bm100_3)
+```
+
