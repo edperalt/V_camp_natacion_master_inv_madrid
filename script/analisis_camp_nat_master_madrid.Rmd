@@ -1,0 +1,312 @@
+---
+title: "V Campeonato de natacion master Invierno 21-22"
+
+
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(wordcloud2)
+library(dplyr)
+library(RColorBrewer)
+library(wordcloud)
+library(patchwork)
+library(flextable)
+```
+
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+los_datos <- read_rds("../raw_data/listado_df.rds") %>% 
+  mutate(Club = as.factor(Club),
+         Sexo = ifelse(Sexo == "Fem", "Chicas", "Chicos")) 
+
+alc_name <- data.frame(word = "C.N. ALCOBENDAS", 
+                       freq = 2)
+alc_nadadores_num <- los_datos %>% 
+  filter(Club == "C.N. Alcobendas") %>% 
+  group_by(Nombre) %>% 
+  summarise(freq = n()) %>% 
+  rename(word = Nombre) %>% 
+ungroup() %>% 
+  separate(word, c("Apellido", "word"), ",") %>% 
+  select(-Apellido) %>% mutate(freq = 1) %>% 
+  rbind(alc_name) %>% arrange(desc(freq))
+
+
+```
+# C.N. ALCOBENDAS 
+
+<br>
+<br>
+<br>
+
+##   <span style="color:orange"> QUIENES SOMOS? </span>
+
+
+<br>
+<br>
+
+```{r echo=FALSE}
+wordcloud2(data=alc_nadadores_num, size=0.4, color='random-dark')
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cna <- los_datos %>% filter(Club == "C.N. Alcobendas")
+
+
+```
+
+<br>
+<br>
+<br>
+<br>
+
+## Vamos a nadar <span style="color:orange"> `r nrow(cna)` pruebas </span> individuales!!
+
+<br>
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cna_cat<-
+cna %>% 
+  ggplot(aes(cat)) +
+  geom_histogram(stat= "count", aes(fill = Sexo))+
+  theme_minimal()+
+  theme(axis.title.y = element_blank(),
+        axis.text.y  = element_blank(),
+        axis.ticks.y = element_blank())+
+  labs(x= "Categorias",
+       fill = "") +
+  scale_fill_manual("", values = c("Chicas" = "red1", "Chicos" = "navyblue"))
+cna_cat
+```
+
+<br>
+<br>
+<br>
+
+## somos un club super balanceado por edades.....
+
+<br>
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cna_mean_sd <- cna %>% 
+  mutate(edad = ifelse(Categoria<3, 22-Categoria, 122-Categoria)) %>% 
+  drop_na(edad) %>% 
+  group_by(Club) %>% 
+  summarise(mean = mean(edad),
+            sd = sd(edad))
+madrid_edad <-los_datos %>% 
+  mutate(edad = ifelse(Categoria<3, 22-Categoria, 122-Categoria)) 
+
+cna_edad <- cna %>% 
+  mutate(edad = ifelse(Categoria<3, 22-Categoria, 122-Categoria))
+  
+  
+madrid_avg <-
+  los_datos %>%
+  mutate(edad = ifelse(Categoria<3, 22-Categoria, 122-Categoria)) %>% 
+  group_by(Club) %>% 
+  drop_na(edad) %>% 
+  summarise(mean = mean(edad),
+            sd = sd(edad)) %>% 
+  arrange(desc(mean)) %>% 
+  mutate(Club = fct_reorder(Club, mean)) %>% 
+  ggplot(aes(Club, mean))+
+  geom_point()+
+  geom_violin(data = madrid_edad, aes(Club,edad), size = 0.5)+
+  geom_violin(data = cna_edad, aes(Club,edad),color = "red", size = 0.5)+
+  # geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2,
+                 # position=position_dodge(0.05))+
+  geom_point(data=cna_mean_sd,aes(Club,mean), color= "red1")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(y= "edad")
+
+
+madrid_avg
+```
+
+<br>
+<br>
+<br>
+
+
+## y nadaremos en <span style="color: orange"> 15!! pruebas diferentes!! </span>
+
+<br>
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cna_pruebas<-
+cna %>% 
+  mutate(Prueba = paste0(Prueba, " ", estilo)) %>% 
+  ggplot(aes(Prueba)) +
+  geom_bar(stat = "count", aes(forcats::fct_infreq(Prueba),fill = Sexo)) +
+  theme_minimal()+
+  # theme(axis.text.y = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  theme(#axis.title.x = element_blank(),
+        axis.text.x  = element_blank(),
+        axis.ticks.x = element_blank())+
+  labs(x= "Pruebas",
+       fill = "",
+       y = "C.N. ALCOBENDAS") +
+  # scale_fill_discrete(name = "", labels = c("Chicas", "Chicos"), ) +
+  scale_fill_manual("", values = c("Chicas" = "red1", "Chicos" = "navyblue"))+
+  coord_flip()
+
+cna_pruebas
+
+```
+
+<br>
+<br>
+
+## el top 3 de nuestras carreras son muy madrileñas!!
+### <span style="color: orange;"> Somos una comunidad de velocístas!!</span>
+
+<br>
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+madrid_pruebas<-
+los_datos %>% 
+  mutate(Prueba = paste0(Prueba, " ", estilo)) %>% 
+  ggplot(aes(Prueba)) +
+  geom_bar(stat = "count", aes(forcats::fct_infreq(Prueba),fill = Sexo)) +
+  theme_minimal()+
+  # theme(axis.text.y = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  theme(#axis.title.x = element_blank(),
+        axis.text.x  = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.position = "none")+
+  labs(x= "Pruebas",
+       y= "CLUBES DE MADRID",
+       fill = "") +
+  # scale_fill_discrete(name = "", labels = c("Chicas", "Chicos"), ) +
+  scale_fill_manual("", values = c("Chicas" = "red1", "Chicos" = "navyblue"),labels = )+
+  coord_flip()
+  
+
+madrid_pruebas + cna_pruebas
+```
+
+<br>
+<br>
+
+## Listos para enfrentar nuevos retos...
+
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cna_retos<- cna %>% group_by(Club) %>% 
+  summarise(mean = mean(Tiempo == "NT"))
+```
+
+<br>
+<br>
+
+### el `r round(cna_retos$mean[[1]]*100)`%  de nuestras pruebas .. estamos inscritos con N:T. hace mas de 3 años que no las nadamos... SIEMPRE BUSCANDO NUEVOS RETOS!!! 
+
+Este gráfico muestra la proporción de pruebas por equipo en las que estamos inscritos con NT.
+
+<br>
+<br>
+
+```{r echo=FALSE, warning=TRUE, message=FALSE}
+
+
+los_datos %>% 
+  group_by(Club) %>% 
+  summarise(mean = round(mean(Tiempo == "NT"),2)*100) %>% 
+  arrange((mean)) %>% 
+   mutate(Club = fct_reorder(Club, desc(mean))) %>% 
+  ggplot(aes(Club,mean))+
+  geom_point()+
+  geom_point(data = cna_retos, aes(Club, mean*100), color = "red", size =4)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(y = "% de competiciones nuevas!!")
+  
+  
+```
+
+<br>
+<br>
+
+# y como vienen <span style="color: orange">los pronósticos??</span>
+
+con los tiempos de inscripción, el top ten por clubes ( por puntos )
+
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+  los_datos %>% 
+  filter(Tiempo != "NT") %>% 
+  group_by(cat,Prueba, estilo,Sexo) %>% 
+  mutate(id=row_number(),
+         puntos = 9-id,
+         puntos = ifelse(id == 1, puntos +1, puntos)
+         ) %>% 
+  ungroup() %>% 
+  group_by(Club) %>% 
+  summarise(ranking = sum(puntos)) %>%
+  arrange(desc(ranking)) %>% 
+  select(Club) %>% 
+  head(10) %>% 
+  flextable() %>% 
+  autofit()
+  
+
+
+```
+
+<br>
+<br>
+
+##  <span style="color: red">Y las MEDALLAS?????</span>
+<br>
+
+hay que ver como nos sale el fin a todos... y las sorpresas de los NT!!!!.. pero jugando con los tiempos de inscripción... salen un montón!!! ahora solo hay que nadar!!!
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+los_datos %>% 
+  filter(Tiempo != "NT") %>% 
+  group_by(cat,Prueba, estilo,Sexo) %>% 
+  mutate(id=row_number(),
+         puntos = 9-id,
+         puntos = ifelse(id == 1, puntos +1, puntos)
+         ) %>% 
+  ungroup() %>% 
+  filter(Club == "C.N. Alcobendas",
+         id < 4) %>% 
+  mutate(medallas = case_when(
+    id == 1 ~ "ORO",
+    id == 2 ~"PLATA",
+    id == 3 ~ "BRONCE"
+  ),
+  medallas =as.factor(medallas),
+  medallas = fct_reorder(medallas, id)) %>% 
+  count(medallas) %>% 
+  flextable()
+
+```
+
+<br>
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+<br>

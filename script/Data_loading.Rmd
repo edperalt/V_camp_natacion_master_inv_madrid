@@ -15,6 +15,11 @@ library(tidyverse)
 library(tabulizer)
 ```
 
+
+## Instrucciones
+
+Este script es manula, utiliza la version manual de *tabulize*, que extrae los datos del pdf oficial.
+
 ## 200 Est F
 
 ```{r}
@@ -22,7 +27,7 @@ the_file <- "../raw_data/LISTADO INICIAL PREINSCRIPCIONES V CTO MASTER INVIERNO 
  
 dista <- 200
 sex <- "Fem"
-tipo <- "libre"
+tipo <- "Estilos"
 
 temp<-extract_areas(the_file, pages = 2)
 
@@ -37,8 +42,9 @@ estf200 <-tibble(Nombre = temp[[1]][,2],
   separate(Club, c("delete","Club"), " - ") %>% 
   select(-delete)  
   
+estf200 <- estf200 %>% mutate(estilo = tipo)
   
-xdata <- estf200
+xdata <- estf200 
 ```
 
 
@@ -51,7 +57,7 @@ xdata <- estf200
 
 dista <- 200
 sex <- "Mas"
-tipo <- "libre"
+tipo <- "Estilos"
 
 
 
@@ -78,7 +84,7 @@ estm200_2 <-tibble(Nombre = temp[[2]][,2],
   select(-delete)  
 
 
- estm200 <- estm200_1 %>% rbind(estm200_2) 
+ estm200 <- estm200_1 %>% rbind(estm200_2) %>% mutate(estilo = tipo)
   
  xdata <- estf200 %>% rbind(estm200)
 ```
@@ -91,7 +97,7 @@ estm200_2 <-tibble(Nombre = temp[[2]][,2],
 
 dista <- 100
 sex <- "Fem"
-tipo <- "braza"
+tipo <- "Braza"
 
 temp<-extract_areas(the_file, pages = c(4,5))
 
@@ -116,7 +122,7 @@ brf100_1 <-tibble(Nombre = temp[[1]][,2],
   separate(Club, c("delete","Club"), " - ") %>% 
   select(-delete)   
 
- brf100 <- brf100_1 %>% rbind(brf100_2)
+ brf100 <- brf100_1 %>% rbind(brf100_2)%>% mutate(estilo = tipo)
  
   xdata <- estf200 %>% rbind(estm200) %>% 
     rbind(brf100)
@@ -129,10 +135,10 @@ brf100_1 <-tibble(Nombre = temp[[1]][,2],
 
 dista <- 100
 sex <- "Mas"
-tipo <- "braza"
+tipo <- "Braza"
 
 temp<-extract_areas(the_file, pages = c(5,6,7))
-temp<-extract_areas(the_file, pages = c(5))
+# temp<-extract_areas(the_file, pages = c(5))
 
 
 bm100_1 <-tibble(Nombre = temp[[1]][,2],
@@ -167,7 +173,8 @@ bm100_3 <-tibble(Nombre = temp[[3]][,2],
   select(-delete) 
 
 
-bm100 <- bm100_1 %>% rbind(brm100_2) %>% rbind(bm100_3)
+bm100 <- bm100_1 %>% rbind(brm100_2) %>% rbind(bm100_3) %>% mutate(estilo = tipo)
+
 
 xdata <- estf200 %>% rbind(estm200) %>% 
     rbind(brf100) %>% rbind(bm100)
@@ -183,7 +190,7 @@ xdata <- estf200 %>% rbind(estm200) %>%
 ```{r}
 dista <- 200
 sex <- "Fem"
-tipo <- "libre"
+tipo <- "Libre"
 
 
 temp<-extract_areas(the_file, pages = c(7,8))
@@ -213,7 +220,7 @@ lf200_2 <-tibble(Nombre = temp[[2]][,2],
   separate(Club, c("delete","Club"), " - ") %>% 
   select(-delete) 
 
-lf200 <- lf200_1 %>%  rbind(lf200_2)
+lf200 <- lf200_1 %>%  rbind(lf200_2) %>% mutate(estilo = tipo)
 
 xdata <- estf200 %>% rbind(estm200) %>% 
     rbind(brf100) %>% rbind(bm100) %>% 
@@ -227,10 +234,10 @@ xdata <- estf200 %>% rbind(estm200) %>%
 
 dista <- 200
 sex <- "Mas"
-tipo <- "libre"
+tipo <- "Libre"
 
 temp<-extract_areas(the_file, pages = c(9,10,11))
-# temp<-extract_areas(the_file, pages = c(9))
+# temp<-extract_areas(the_file, pages = c(11)
 
 
 lm200_1 <-tibble(Nombre = temp[[1]][,2],
@@ -264,7 +271,7 @@ lm200_3 <-tibble(Nombre = temp[[3]][,2],
   select(-delete) 
 
 
-lm200 <- lm200_1 %>% rbind(lmm200_2) %>% rbind(lm200_3)
+lm200 <- lm200_1 %>% rbind(lmm200_2) %>% rbind(lm200_3) %>% mutate(estilo = tipo)
 
 xdata <- estf200 %>% rbind(estm200) %>% 
     rbind(brf100) %>% rbind(bm100) %>% 
@@ -273,4 +280,1548 @@ xdata <- estf200 %>% rbind(estm200) %>%
 ```
 
 
+##100 E femenino
+
+
+```{r}
+
+dista <- 100
+sex <- "Fem"
+tipo <- "Espalda"
+
+
+temp<-extract_areas(the_file, pages = c(11,12))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+ef100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+
+ef100_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+ef100 <- ef100_1 %>%  rbind(ef100_2)%>% mutate(estilo = tipo)
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100)
+
+
+```
+
+## 100 espalda Masculino
+
+
+```{r}
+
+
+
+dista <- 100
+sex <- "Mas"
+tipo <- "Espalda"
+
+
+
+temp<-extract_areas(the_file, pages = c(12,13))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+em100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+
+em100_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+em100 <- em100_1 %>%  rbind(em100_2) %>% mutate(estilo = tipo)
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100)
+
+```
+
+## 200 mariposa femenino
+
+```{r}
+
+dista <- 200
+sex <- "Fem"
+tipo <- "Mariposa"
+
+
+temp<-extract_areas(the_file, pages = c(14))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+mf200 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  %>% mutate(estilo = tipo)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200)
+
+```
+
+## 200 m mariposa masculino
+
+```{r}
+
+
+dista <- 200
+sex <- "Mas"
+tipo <- "Mariposa"
+
+
+
+temp<-extract_areas(the_file, pages = c(14,15))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+mm200_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+mm200_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+mm200<- mm200_2 %>%  rbind(mm200_1)
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200)
+
+```
+
+
+## 50 m libre masculino
+
+```{r}
+
+dista <- 50
+sex <- "Mas"
+tipo <- "Libre"
+
+
+
+temp<-extract_areas(the_file, pages = c(15,16,17,18,19))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+lm50_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+lm50_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+lm50_3 <-tibble(Nombre = temp[[3]][,2],
+                Club = temp[[3]][,4],
+                Tiempo = temp[[3]][,5],
+                Categoria = as.numeric(temp[[3]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+lm50_4 <-tibble(Nombre = temp[[4]][,2],
+                Club = temp[[4]][,4],
+                Tiempo = temp[[4]][,5],
+                Categoria = as.numeric(temp[[4]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+lm50_5 <-tibble(Nombre = temp[[5]][,2],
+                Club = temp[[5]][,4],
+                Tiempo = temp[[5]][,5],
+                Categoria = as.numeric(temp[[5]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+lm50<- lm50_2 %>%  rbind(lm50_1) %>% rbind(lm50_3) %>% rbind(lm50_4) %>% rbind(lm50_5)
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50)
+
+```
+
+
+## 50 libre femenino
+
+```{r}
+
+dista <- 50
+sex <- "Fem"
+tipo <- "Libre"
+
+
+
+temp<-extract_areas(the_file, pages = c(19,20,21))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+lf50_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+lf50_2 <- tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)    
+
+lf50_3 <-tibble(Nombre = temp[[3]][,2],
+                Club = temp[[3]][,4],
+                Tiempo = temp[[3]][,5],
+                Categoria = as.numeric(temp[[3]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+
+lf50<- lf50_2 %>%  rbind(lf50_1) %>% rbind(lf50_3) 
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50)
+
+```
+
+
+## 400 estilos masculino
+
+```{r}
+dista <- 400
+sex <- "Mas"
+tipo <- "Estilos"
+
+
+
+temp<-extract_areas(the_file, pages = c(21,22))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+estm400_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+estm400_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+
+estm400<- estm400_2 %>%  rbind(estm400_1) 
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400)
+```
+
+## 400 estilos femenino
+
+
+```{r}
+dista <- 400
+sex <- "Fem"
+tipo <- "Estilos"
+
+
+
+temp<-extract_areas(the_file, pages = c(22))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+estf400 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400)
+
+```
+## 50 m braza masculino
+```{r}
+
+dista <- 50
+sex <- "Mas"
+tipo <- "Braza"
+
+
+
+temp<-extract_areas(the_file, pages = c(23,24,25))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+bm50_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+bm50_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+bm50_3 <-tibble(Nombre = temp[[3]][,2],
+                Club = temp[[3]][,4],
+                Tiempo = temp[[3]][,5],
+                Categoria = as.numeric(temp[[3]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+ 
+bm50<- bm50_2 %>%  rbind(bm50_1) %>% rbind(bm50_3) 
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50)
+```
+
+## 50m brazo femenino
+
+
+```{r}
+
+
+dista <- 50
+sex <- "Fem"
+tipo <- "Braza"
+
+
+
+temp<-extract_areas(the_file, pages = c(26,27))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+bf50_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+bf50_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+
+ 
+bf50<- bf50_2 %>%  rbind(bf50_1) 
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50)
+
+```
+
+## 200 espalda masculino
+
+```{r}
+
+dista <- 200
+sex <- "Mas"
+tipo <- "Espalda"
+
+
+
+temp<-extract_areas(the_file, pages = c(27,28))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+em200_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+em200_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+
+ 
+em200<- em200_2 %>%  rbind(em200_1) 
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200)
+
+```
+
+
+## 200 espalda femenino
+
+```{r}
+
+dista <- 200
+sex <- "Fem"
+tipo <- "Espalda"
+
+
+
+temp<-extract_areas(the_file, pages = c(29))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+ef200 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200)
+
+```
+
+## 50 mariposa masculino
+
+
+```{r}
+
+
+dista <- 50
+sex <- "Mas"
+tipo <- "Mariposa"
+
+
+
+temp<-extract_areas(the_file, pages = c(32,33,34))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+mm50_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+mm50_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+mm50_3 <-tibble(Nombre = temp[[3]][,2],
+                Club = temp[[3]][,4],
+                Tiempo = temp[[3]][,5],
+                Categoria = as.numeric(temp[[3]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+
+mm50<- mm50_2 %>%  rbind(mm50_1) %>% rbind(mm50_3) 
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50)
+```
+
+## 50 mariposa femenino
+
+
+```{r}
+
+
+dista <- 50
+sex <- "Fem"
+tipo <- "Mariposa"
+
+
+
+temp<-extract_areas(the_file, pages = c(34, 35))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+mf50_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+mf50_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+
+
+
+mf50<- mf50_2 %>%  rbind(mf50_1) 
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50)
+```
+
+## 100 libre masculino
+
+```{r}
+
+
+
+dista <- 100
+sex <- "Mas"
+tipo <- "Libre"
+
+
+
+temp<-extract_areas(the_file, pages = c(36,37,38))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+lm100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+lm100_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+lm100_3 <-tibble(Nombre = temp[[3]][,2],
+                Club = temp[[3]][,4],
+                Tiempo = temp[[3]][,5],
+                Categoria = as.numeric(temp[[3]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+
+lm100<- lm100_2 %>%  rbind(lm100_1) %>% rbind(lm100_3) 
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100)
+
+
+```
+
+## 100 libre femenino
+
+```{r}
+
+
+dista <- 100
+sex <- "Fem"
+tipo <- "Libre"
+
+
+
+temp<-extract_areas(the_file, pages = c(39,40))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+lf100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+lf100_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+
+lf100<- lf100_2 %>%  rbind(lf100_1) 
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100)
+```
+
+## 100 estilos masculino
+
+
+
+```{r}
+
+
+dista <- 100
+sex <- "Mas"
+tipo <- "Estilos"
+
+
+
+temp<-extract_areas(the_file, pages = c(40,41,42))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+estm100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+estm100_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+estm100_3 <-tibble(Nombre = temp[[3]][,2],
+                Club = temp[[3]][,4],
+                Tiempo = temp[[3]][,5],
+                Categoria = as.numeric(temp[[3]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+
+estm100<- estm100_2 %>%  rbind(estm100_1) %>% rbind(estm100_3) 
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)
+
+
+
+```
+
+## 100 estilos femenino
+
+
+
+```{r}
+
+
+dista <- 100
+sex <- "Fem"
+tipo <- "Estilos"
+
+
+
+temp<-extract_areas(the_file, pages = c(42,43))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+estf100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+estf100_2 <- tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+estf100<- estf100_2 %>%  rbind(estf100_1)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100)
+
+
+
+```
+
+## 200 braza masculino
+
+```{r}
+
+dista <- 200
+sex <- "Mas"
+tipo <- "Braza"
+
+
+
+temp<-extract_areas(the_file, pages = c(44,45))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+bm200_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+bm200_2 <- tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)   
+
+
+
+
+
+bm200<- bm200_2 %>%  rbind(bm200_1)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100) %>% 
+  rbind(bm200)
+
+
+
+
+```
+
+
+## 200 braza femenino
+
+```{r}
+
+dista <- 200
+sex <- "Fem"
+tipo <- "Braza"
+
+
+
+temp<-extract_areas(the_file, pages = c(45,46))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+bf200_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+bf200_2    <- tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+
+
+
+
+bf200<- bf200_2 %>%  rbind(bf200_1)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100) %>% 
+  rbind(bm200) %>% rbind(bf200)
+
+
+
+
+```
+
+
+## 400 libre masculino
+
+```{r}
+
+dista <- 400
+sex <- "Mas"
+tipo <- "Libre"
+
+
+
+temp<-extract_areas(the_file, pages = c(51,52))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+lm400_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+lm400_2 <- tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5]) %>% 
+  mutate(Categoria = as.numeric(str_sub(Nombre,-2)),
+         Nombre = str_sub(Nombre, end = -3),
+         Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete)  
+
+lm400<- lm400_2 %>%  rbind(lm400_1)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100) %>% 
+  rbind(bm200) %>% rbind(bf200) %>% 
+  rbind(lm400)
+
+
+```
+
+## 400 libre femenino
+
+```{r}
+
+dista <- 400
+sex <- "Fem"
+tipo <- "Libre"
+
+
+
+temp<-extract_areas(the_file, pages = c(53,54))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+lf400_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+lf400_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+lf400<- lf400_2 %>%  rbind(lf400_1)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100) %>% 
+  rbind(bm200) %>% rbind(bf200) %>% 
+  rbind(lm400) %>% rbind(lf400)
+
+
+```
+
+
+## 50 m espalda masculino
+
+
+```{r}
+
+dista <- 50
+sex <- "Mas"
+tipo <- "Espalda"
+
+
+
+temp<-extract_areas(the_file, pages = c(54,55))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+em50_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+em50_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+em50<- em50_2 %>%  rbind(em50_1)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100) %>% 
+  rbind(bm200) %>% rbind(bf200) %>% 
+  rbind(lm400) %>% rbind(lf400) %>% 
+  rbind(em50)
+
+
+```
+
+
+## 50 m espalda femenino
+
+
+```{r}
+
+dista <- 50
+sex <- "Fem"
+tipo <- "Espalda"
+
+
+
+temp<-extract_areas(the_file, pages = c(56,57))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+ef50_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+ef50_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+ef50<- ef50_2 %>%  rbind(ef50_1)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100) %>% 
+  rbind(bm200) %>% rbind(bf200) %>% 
+  rbind(lm400) %>% rbind(lf400) %>% 
+  rbind(em50) %>% rbind(ef50)
+
+
+```
+
+
+## 100 m mariposa masculino
+
+
+```{r}
+
+dista <- 100
+sex <- "Mas"
+tipo <- "Mariposa"
+
+
+
+temp<-extract_areas(the_file, pages = c(57,58))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+mm100_1 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+mm100_2 <-tibble(Nombre = temp[[2]][,2],
+                Club = temp[[2]][,4],
+                Tiempo = temp[[2]][,5],
+                Categoria = as.numeric(temp[[2]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+mm100<- mm100_2 %>%  rbind(mm100_1)
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100) %>% 
+  rbind(bm200) %>% rbind(bf200) %>% 
+  rbind(lm400) %>% rbind(lf400) %>% 
+  rbind(em50) %>% rbind(ef50) %>% 
+  rbind(mm100)
+
+
+```
+
+
+
+## 100 m mariposa femenino
+
+
+```{r}
+
+dista <- 100
+sex <- "Fem"
+tipo <- "Mariposa"
+
+
+
+temp<-extract_areas(the_file, pages = c(58))
+# temp<-extract_areas(the_file, pages = 11)
+
+
+
+
+mf100 <-tibble(Nombre = temp[[1]][,2],
+                Club = temp[[1]][,4],
+                Tiempo = temp[[1]][,5],
+                Categoria = as.numeric(temp[[1]][,3])) %>% 
+  mutate(Prueba = paste0(dista,"m "),
+         Sexo = sex,
+         Distancia = dista,
+         estilo = tipo) %>% 
+  separate(Club, c("delete","Club"), " - ") %>% 
+  select(-delete) 
+
+
+
+xdata <- estf200 %>% rbind(estm200) %>% 
+    rbind(brf100) %>% rbind(bm100) %>% 
+  rbind(lf200) %>% rbind(lm200) %>% 
+  rbind(ef100) %>% rbind(em100) %>% 
+  rbind(mf200) %>% rbind(mm200) %>% 
+  rbind(lm50) %>% rbind(lf50) %>% 
+  rbind(estm400) %>% rbind(estf400) %>% 
+  rbind(bm50) %>% rbind(bf50) %>% 
+  rbind(em200) %>% rbind(ef200) %>% 
+  rbind(mm50) %>% rbind(mf50) %>% 
+  rbind(lm100) %>% rbind(lf100) %>% 
+  rbind(estm100)%>% rbind(estf100) %>% 
+  rbind(bm200) %>% rbind(bf200) %>% 
+  rbind(lm400) %>% rbind(lf400) %>% 
+  rbind(em50) %>% rbind(ef50) %>% 
+  rbind(mm100) %>% rbind(mf100)
+
+
+```
+
+
+## categorias
+
+```{r}
+
+ydata<- xdata %>%  
+  mutate(cat = case_when(
+    Categoria >= 98 | Categoria <=2 ~ "20+",
+    Categoria >= 93 & Categoria <=97 ~ "25+",
+    Categoria >= 88 & Categoria <=92 ~ "30+",
+    Categoria >= 83 & Categoria <=87 ~ "35+",
+    Categoria >= 78 & Categoria <=82 ~ "40+",
+    Categoria >= 73 & Categoria <=77 ~ "45+",
+    Categoria >= 68 & Categoria <=72 ~ "50+",
+    Categoria >= 63 & Categoria <=67 ~ "55+",
+    Categoria >= 58 & Categoria <=62 ~ "60+",
+    Categoria >= 52 & Categoria <=57 ~ "65+",
+    Categoria >= 48 & Categoria <=52 ~ "70+",
+    Categoria >= 42 & Categoria <=47 ~ "75+",
+    Categoria >= 38 & Categoria <=42 ~ "80+",
+    Categoria >= 32 & Categoria <=37 ~ "85+",
+    Categoria >= 28 & Categoria <=32 ~ "90+",
+    Categoria >= 22 & Categoria <=27 ~ "95+",
+    TRUE ~ "other"
+  ),
+  Club = ifelse(is.na(Club), "Cdb Natacion Swimtonic",Club))
+
+ydata$Nombre <- trimws(ydata$Nombre)
+ 
+```
+
+
+
+
+
+```{r}
+saveRDS(ydata,"../raw_data/listado_df.rds")
+```
 
