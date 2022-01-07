@@ -26,7 +26,11 @@ output:
 <br>
 
 
-![](analisis_camp_nat_master_madrid_files/figure-html/word_cl_alco.png)<!-- -->
+```{=html}
+<div id="htmlwidget-58d03d533eaaa552196c" style="width:672px;height:480px;" class="wordcloud2 html-widget"></div>
+<script type="application/json" data-for="htmlwidget-58d03d533eaaa552196c">{"x":{"word":["C.N. ALCOBENDAS"," Alicia"," Javier"," Ignacio"," David"," Andres"," Diego"," Elena"," Juan Antonio"," Pablo"," Carlos"," Diego"," Angel"," Jose A."," Enrique"," Hector"," Laura"," Gabriela"," Israel"," Jesus"," Abel"," Raquel"," Vasco Jorge"," Carlos"," Carlos A."," Diego"," Edmundo"," Adrian"," Alberto Manuel"," Cesar"," Oscar"," Jorge"," Alejandro"," Niall"," Daniel"," Elena"],"freq":[2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":27,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0.4,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+```
+
 
 
 <br>
@@ -106,6 +110,27 @@ con los tiempos de inscripción, el top ten por clubes ( por puntos )
 <br>
 
 
+```r
+## puntos pesado por numero de nadadores
+
+# los_datos %>% 
+#   group_by(Club) %>% 
+#   mutate(total_nadadores = length(unique(Nombre))) %>% 
+#   filter(Tiempo != "NT") %>% 
+#   group_by(cat,Prueba, estilo,Sexo) %>% 
+#   mutate(id=row_number(),
+#          puntos = 9-id,
+#          puntos = ifelse(id == 1, puntos +1, puntos)
+#          ) %>% 
+#   ungroup() %>% 
+#   group_by(Club) %>% 
+#   summarise(ranking = sum(puntos)/first(total_nadadores)) %>%
+#   arrange(desc(ranking)) %>% 
+#   select(Club) %>% 
+#   # head(13) %>% 
+#   flextable() %>% 
+#   autofit()
+```
 
 
 ```{=html}
